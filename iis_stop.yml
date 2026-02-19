@@ -1,0 +1,39 @@
+---
+- name: Playbook to check server accessibility
+  hosts: "{{ deployment_hosts }}"
+  gather_facts: false
+
+  vars_files:
+    - vars.yml
+
+  pre_tasks:
+    - name: End playbook if no services are provided
+      meta: end_play
+      when: service_to_stop | length == 0
+
+  tasks:
+    - name: Get service status
+      ansible.windows.win_service_info:
+        name: "{{ item }}"
+      loop: "{{ service_to_stop }}"
+      register: service_status
+
+    - name: Stop service only if it is running
+      ansible.windows.win_service:
+        name: "{{ item.item }}"
+        state: stopped
+        force_dependent_services: yes
+      loop: "{{ service_status.results }}"
+      when: item.services[0].state != "stopped"
+
+    - name: Display message after stopping service
+      debug:
+        msg: "Service {{ item.item }} has been stopped."
+      loop: "{{ service_status.results }}"
+      when: item.services[0].state != "stopped"
+
+    - name: Skip message if service already stopped
+      debug:
+        msg: "Service {{ item.item }} is already stopped. Skipping."
+      loop: "{{ service_status.results }}"
+      when: item.services[0].state == "stopped"

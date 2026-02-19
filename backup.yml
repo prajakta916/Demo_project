@@ -1,0 +1,29 @@
+- name: Deploy txt file with backup on Windows
+  hosts: "{{ deployment_hosts }}"
+  gather_facts: false
+
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Check if destination file exists
+      ansible.windows.win_stat:
+        path: "{{ dest_file }}"
+      register: file_status
+
+    - name: Ensure backup directory exists
+      ansible.windows.win_file:
+        path: "{{ backup_dir }}"
+        state: directory
+      when: file_status.stat.exists
+
+    - name: Backup existing txt file with timestamp
+      ansible.windows.win_shell: |
+        $timestamp = Get-Date -Format "yyyyMMddHHmmss"
+        Copy-Item "{{ dest_file }}" "{{ backup_dir }}\test2_{{ '$timestamp' }}.txt"
+      when: file_status.stat.exists
+
+    - name: Deploy new txt file
+      ansible.windows.win_copy:
+        src: "{{ src_file }}"
+        dest: "{{ dest_file }}"

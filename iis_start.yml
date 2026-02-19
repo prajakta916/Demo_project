@@ -1,0 +1,26 @@
+---
+- name: Playbook to check server accessibility
+  hosts: "{{ deployment_hosts }}"
+  gather_facts: false
+
+  vars_files:
+    - vars.yml
+
+  pre_tasks:
+    - name: End playbook if no services are provided
+      meta: end_play
+      when: service_to_start | length == 0
+
+  tasks:
+    - name: Start each service if the service name is provided
+      ansible.windows.win_service:
+        name: "{{ item }}"
+        state: started
+        force_dependent_services: yes
+      loop: "{{ service_to_start }}"
+
+    - name: Display message after started each service
+      debug:
+        msg: "Service {{ item }} has been started."
+      loop: "{{ service_to_start }}"
+
