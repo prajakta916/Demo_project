@@ -12,6 +12,11 @@
         path: "{{ dest_file }}"
       register: file_status
 
+    - name: Check if file already exists on Windows server
+      ansible.windows.win_stat:
+        path: "{{ src_file }}"
+      register: file_status
+
     - name: Show file existence status (for visibility)
       debug:
         msg: "File already exists on destination"
@@ -23,4 +28,5 @@
         dest: "{{ dest_file }}"
         remote_src: yes
       when: not (file_status.stat.exists | default(false))
+
 
