@@ -4,6 +4,7 @@ service_to_start: [ "W3SVC" ]
 
 src_file: D:/Ansible/Release/sample.txt
 
-dest_file: D:/Ansible/Destination
+dest_file: D:/Ansible/Destination/sample.txt
 
 backup_dir: D:/Ansible/Backup
+
