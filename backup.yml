@@ -18,13 +18,17 @@
         state: directory
       when: file_status.stat.exists
 
-    - name: Backup existing txt file with timestamp
-      ansible.windows.win_shell: |
-        $timestamp = Get-Date -Format "yyyyMMddHHmmss"
-        Copy-Item "{{ dest_file }}" "{{ backup_dir }}\sample_$timestamp.txt"
-      when: file_status.stat.exists
+    - name: Get current datetime from PowerShell
+      ansible.windows.win_shell: "(Get-Date -Format 'yyyyMMdd_HHmmss')"
+      register: datetime_output
 
-    - name: Deploy new txt file
+    - name: Set current datetime fact
+      ansible.builtin.set_fact:
+        current_datetime: "{{ datetime_output.stdout | trim }}"
+
+    - name: Backup existing txt file with timestamp
       ansible.windows.win_copy:
-        src: "{{ src_file }}"
-        dest: "{{ dest_file }}"
+        src: "{{ dest_file }}"
+        dest: "{{ backup_dir }}\\sample_{{ current_datetime }}.txt"
+        remote_src: yes
+      when: file_status.stat.exists
