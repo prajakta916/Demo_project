@@ -21,4 +21,6 @@
       ansible.windows.win_copy:
         src: "{{ src_file }}"
         dest: "{{ dest_file }}"
+        remote_src: yes
       when: not (file_status.stat.exists | default(false))
+
