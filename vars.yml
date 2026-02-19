@@ -2,11 +2,12 @@ service_to_stop: [ "W3SVC" ]
 
 service_to_start: [ "W3SVC" ]
 
-src_file: "C:\\Ansible\\Release\\sample.txt"
+src_file: C:\\Ansible\\Release\\sample.txt.txt"
 
-dest_file: "C:\\Ansible\\Destination\\sample.txt"
+dest_file: "C:\\Ansible\\Destination\\sample.txt.txt"
 
 backup_dir: C:/Ansible/Backup
+
 
 
 
