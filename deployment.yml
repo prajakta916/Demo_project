@@ -1,4 +1,5 @@
-- name: Deploy file from Ubuntu to Windows server
+---
+- name: Deploy file 
   hosts: "{{ deployment_hosts }}"
   gather_facts: false
 
@@ -14,11 +15,10 @@
     - name: Show file existence status (for visibility)
       debug:
         msg: "File already exists on destination"
-      when: file_status.stat.exists
+      when: file_status.stat.exists | default(false)
 
     - name: Copy file only if it does NOT exist
       ansible.windows.win_copy:
         src: "{{ src_file }}"
         dest: "{{ dest_file }}"
-      when: not file_status.stat.exists
-
+      when: not (file_status.stat.exists | default(false))
