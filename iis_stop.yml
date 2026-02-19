@@ -1,5 +1,5 @@
 ---
-  name: Playbook to check server accessibility
+- name: Playbook to check server accessibility
   hosts: "{{ deployment_hosts }}"
   gather_facts: false
 
@@ -37,4 +37,3 @@
         msg: "Service {{ item.item }} is already stopped. Skipping."
       loop: "{{ service_status.results }}"
       when: item.services[0].state == "stopped"
-
